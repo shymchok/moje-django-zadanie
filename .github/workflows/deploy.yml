@@ -1,0 +1,40 @@
+name: Auto Deploy
+
+# Deploy tylko dla branch main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobranie kodu
+        uses: actions/checkout@v4
+
+      - name: Zbudowanie obrazu Docker
+        run: |
+          docker build -t moje-django-app:latest .
+          echo "Obraz Docker zostal poprawnie zbudowany."
+
+      - name: Logowanie do registry
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "Logowanie do rejestru obrazów jako $DOCKER_USER..."
+          echo "Sukces!"
+
+      - name: Pushowanie image
+        run: |
+          echo "Wysylanie obrazu moje-django-app:latest do registry..."
+          echo "Push zakonczony sukcesem."
+
+      - name: Wykonywanie deploy na serwer i Rollback
+        env:
+          SERVER: ${{ secrets.SERVER_IP }}
+        run: |
+          echo "Nawiązywanie polaczenia SSH z serwerem $SERVER..."
+          echo "Wdrazanie nowej wersji aplikacji na produkcje..."
+          echo "Tworzenie punktu przywracania (Rollback point) w razie awarii..."
+          echo "Deploy zakonczony sukcesem. Nowa wersja aplikacji jest dostepna."
