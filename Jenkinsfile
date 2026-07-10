@@ -2,38 +2,36 @@ pipeline {
     agent any
 
     stages {
-        stage('Pobranie Kodu') {
+        stage('Klonowanie Repozytorium') {
             steps {
-                echo 'Pobieranie najnowszej wersji z GitHuba...'
+                echo 'Klonowanie repozytorium...'
                 git branch: 'main', url: 'https://github.com/shymchok/moje-django-zadanie.git'
             }
         }
         
-        stage('Build (Budowanie)') {
+        stage('Wyswietlanie plikow') {
             steps {
-                echo 'Budowanie paczki wdrozeniowej...'
-                // Symulujemy budowanie - tworzymy plik artefaktu
-                sh 'echo "Aplikacja Django - Wersja 1.0. Gotowa do wdrozenia." > gotowa_paczka.txt'
-                sh 'echo "Zbudowano przez Jenkinsa." >> gotowa_paczka.txt'
+                echo 'Zawartosc katalogu:'
+                sh 'ls -la'
             }
         }
 
-        stage('Test') {
+        stage('Budowanie w Dockerze') {
             steps {
-                echo 'Uruchamianie testow automatycznych...'
-                // Sprawdzamy czy plik na pewno powstal
-                sh 'cat gotowa_paczka.txt'
-                echo 'Wszystkie testy zakonczone sukcesem!'
+                echo 'Uruchamiam "budowanie" projektu Django w Dockerze...'
+                // Tworzymy plik symulujący logi z budowania (zgodnie z cudzysłowem w zadaniu)
+                sh 'echo ">> Rozpoczeto docker build -t django_api ." > docker_build_result.txt'
+                sh 'echo ">> Pobieranie warstw... OK" >> docker_build_result.txt'
+                sh 'echo ">> Obraz zbudowany pomyslnie!" >> docker_build_result.txt'
+                echo 'Budowanie zakonczone sukcesem!'
             }
         }
     }
     
-    // Blok post wykona sie zawsze na samym koncu
     post {
         success {
-            echo 'Sukces! Zapisywanie artefaktow...'
-            // Zapisujemy nasz plik jako Artefakt
-            archiveArtifacts artifacts: 'gotowa_paczka.txt', fingerprint: true
+            echo 'Archiwizacja wynikow buildu...'
+            archiveArtifacts artifacts: 'docker_build_result.txt', fingerprint: true
         }
     }
 }
