@@ -137,3 +137,21 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
 ]
+
+## 🚀 CI/CD Pipeline (GitHub Actions)
+Projekt wykorzystuje ciągłą integrację i wdrażanie (Continuous Integration / Continuous Deployment). Poniżej znajduje się aktualny status poszczególnych procesów:
+
+![CI](https://github.com/shymchok/moje-django-zadanie/actions/workflows/ci.yml/badge.svg)
+![Lint](https://github.com/shymchok/moje-django-zadanie/actions/workflows/lint.yml/badge.svg)
+![Tests](https://github.com/shymchok/moje-django-zadanie/actions/workflows/tests.yml/badge.svg)
+![Security](https://github.com/shymchok/moje-django-zadanie/actions/workflows/security.yml/badge.svg)
+![Deploy](https://github.com/shymchok/moje-django-zadanie/actions/workflows/deploy.yml/badge.svg)
+![Celery](https://github.com/shymchok/moje-django-zadanie/actions/workflows/celery.yml/badge.svg)
+
+### Zaimplementowane funkcje:
+* **Automatyczne testy:** Środowisko z bazą PostgreSQL oraz testy systemowe Django.
+* **Linting i formatowanie:** Kontrola jakości kodu przez Flake8, Black oraz isort.
+* **Skanowanie bezpieczeństwa:** Bandit (kod) oraz Safety (zależności).
+* **Środowisko asynchroniczne:** Wirtualizacja bazy Redis i testy dla środowiska Celery.
+* **Auto-Deploy:** Automatyczne budowanie obrazu Docker po wdrożeniu na gałąź `main`.
+* **Optymalizacje:** Zrównoleglenie zadań, wykorzystanie pamięci podręcznej (cache) dla PIP, mechanizm concurrency.
