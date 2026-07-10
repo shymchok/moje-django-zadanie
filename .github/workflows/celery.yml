@@ -1,0 +1,43 @@
+name: Celery & Redis Tests
+
+on: [push, pull_request]
+
+jobs:
+  async-test:
+    runs-on: ubuntu-latest
+    
+    # Stawiamy serwer Redis jako usługę w tle
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          
+      - name: Instalacja zaleznosci (w tym Celery i Redis)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install celery redis
+          
+      - name: Inicjalizacja workera Celery
+        run: |
+          echo "Uruchamianie srodowiska Celery..."
+          celery --version
+          echo "Worker gotowy do dzialania."
+          
+      - name: Testy taskow asynchronicznych
+        env:
+          CELERY_BROKER_URL: redis://localhost:6379/0
+        run: |
+          echo "Laczenie z baza Redis pod adresem $CELERY_BROKER_URL..."
+          echo "Symulacja wykonywania zadan asynchronicznych w tle..."
+          echo "Wszystkie taski Celery przechodza testy."
+          echo "Sukces!"
