@@ -1,0 +1,58 @@
+name: PostgreSQL Tests
+
+on: [push, pull_request]
+
+jobs:
+  test-db:
+    runs-on: ubuntu-latest
+    
+    # Tutaj definiujemy usługę bazy danych (wymóg z zadania)
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: django_db
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          
+      - name: Instalacja zaleznosci
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Wykonanie migracji
+        working-directory: ./mysite
+        env:
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          POSTGRES_DB: django_db
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+        run: python manage.py migrate
+        
+      - name: Uruchomienie testow
+        working-directory: ./mysite
+        env:
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          POSTGRES_DB: django_db
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+        run: python manage.py test
