@@ -1,6 +1,6 @@
+cat << 'EOF' > .github/workflows/ci.yml
 name: Django CI Workflow
 
-# Workflow uruchamia się dla push i pull_request [cite: 5]
 on:
   push:
     branches: [ "main" ]
@@ -9,32 +9,32 @@ on:
 
 jobs:
   test:
-    [cite_start]runs-on: ubuntu-latest # 
+    runs-on: ubuntu-latest
 
     steps:
     - name: Pobranie kodu repozytorium
       uses: actions/checkout@v4
 
-    - [cite_start]name: Instalacja Python 3.12 # 
+    - name: Instalacja Python 3.12
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-        [cite_start]cache: 'pip' # cache dla zależności pip 
+        cache: 'pip'
 
-    - [cite_start]name: Instalacja zależności # [cite: 9]
+    - name: Instalacja zaleznosci
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - [cite_start]name: Wykonanie migracji # [cite: 10]
+    - name: Wykonanie migracji
       env:
-        # Obsługa zmiennych środowiskowych z GitHub Secrets 
         SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
       run: |
         python manage.py migrate
 
-    - [cite_start]name: Uruchomienie testów Django # [cite: 11]
+    - name: Uruchomienie testow Django
       env:
         SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
       run: |
         python manage.py test
+EOF
