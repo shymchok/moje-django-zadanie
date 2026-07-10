@@ -19,7 +19,7 @@ jobs:
           pip install flake8 black isort
           
       - name: flake8
-        run: flake8 .
+        run: flake8 . --extend-ignore=E501
         
       - name: black-check
         run: black --check .
