@@ -13,13 +13,13 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
           
-      - name: Instalacja zaleznosci bezpieczeństwa
+      - name: Instalacja zaleznosci bezpieczenstwa
         run: |
           python -m pip install --upgrade pip
           pip install bandit safety
           
       - name: Skanowanie kodu (Bandit)
-        run: bandit -r ./mysite
+        run: bandit -r ./mysite -lll
         
       - name: Skanowanie zaleznosci (Safety)
         run: safety check -r requirements.txt
